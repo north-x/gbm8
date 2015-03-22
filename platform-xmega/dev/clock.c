@@ -208,7 +208,6 @@ ISR(AVR_OUTPUT_COMPARE_INT)
 	static uint8_t subcount = 0;
 	TCC1.CCB += CLOCK_PERVAL/4;
 	
-	pwm_tick();
 	subcount++;
 	
 	if ((subcount%4)!=0)

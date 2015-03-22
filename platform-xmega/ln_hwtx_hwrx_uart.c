@@ -113,8 +113,8 @@ void initLocoNetHardware(LnBuf *pstRxBuffer)
 	ACA.CTRLB = ((2500*10/78*64/3300)-1)&0x3F; // 2.5 V Threshold
 	
 	// connect comparators to pins
-	ACA.AC0MUXCTRL = AC_MUXPOS_PIN3_gc | AC_MUXNEG_SCALER_gc;
-	ACA.AC1MUXCTRL = AC_MUXPOS_PIN3_gc | AC_MUXNEG_SCALER_gc;
+	ACA.AC0MUXCTRL = AC_MUXPOS_PIN5_gc | AC_MUXNEG_SCALER_gc;
+	ACA.AC1MUXCTRL = AC_MUXPOS_PIN5_gc | AC_MUXNEG_SCALER_gc;
 	
 	// and enable them
 	//AC0 generates event on falling edge

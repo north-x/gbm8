@@ -37,14 +37,10 @@
 #include "sys/etimer.h"
 #include "sys/utils.h"
 #include "eeprom.h"
-#include "wa2.h"
 #include "usb_support.h"
 #include "ln_support.h"
 #include "usb/usb.h"
-#include "port.h"
-#include "servo.h"
 
-void ubasic_start(void);
 void init(void);
 PROCESS_NAME(port_process);
 uint16_t deviceID;
@@ -66,11 +62,6 @@ void init(void)
 	
 	usb_init();
 	loconet_init();
-	port_init();
-	servo_init();
-	
-	wa2_update_configuration();
-	ubasic_start();
 	
 	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
 	sei();
@@ -84,18 +75,4 @@ int main(void)
     {
         process_run();
     }
-}
-
-void wa2_update_configuration(void)
-{
-	MAP_BITS(eeprom.configA, servo_status, WA2_CONF_SERVO_PWR_ALWAYS_ON, SERVO_STATUS_PWR_ALWAYS_ON);
-	MAP_BITS(eeprom.configA, servo_status, WA2_CONF_SERVO_ENABLE_PWM_A, SERVO_STATUS_ENABLE_PWM_A);
-	MAP_BITS(eeprom.configA, servo_status, WA2_CONF_SERVO_ENABLE_PWM_B, SERVO_STATUS_ENABLE_PWM_B);
-	MAP_BITS(eeprom.configA, port_mode, WA2_CONF_RELAY_MONOSTABLE, PORT_MODE_RELAY_MONOSTABLE);
-	MAP_BITS(eeprom.configA, port_mode, WA2_CONF_PWM_OUTPUTS_ENABLE, PORT_MODE_PWM_ENABLE);
-	MAP_BITS(eeprom.configA, port_mode, WA2_CONF_PWM_CHANNEL7_ENABLE, PORT_MODE_PWM_CH7_ENABLE);
-	MAP_BITS(eeprom.configA, port_mode, WA2_CONF_INPUTS_PULLUP_ENABLE, PORT_MODE_PULLUP_ENABLE);
-	
-	servo_mode_update();
-	port_update_configuration();
 }
