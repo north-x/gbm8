@@ -144,6 +144,21 @@
     <Compile Include="contiki-conf.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="fsz.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="fsz.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gbm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gbm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gbm8.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
@@ -213,16 +228,28 @@
     <Compile Include="loconet\utils.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="port.c">
+    <None Include="port.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="port.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="servo.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="servo.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="sbk.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="port.h">
+    <Compile Include="sbk.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="servo.c">
+    <Compile Include="shiftreg.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="servo.h">
+    <Compile Include="shiftreg.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="sv_support.c">
@@ -279,27 +306,27 @@
     <Compile Include="sys\utils.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ubasic\basic_cfg.h">
+    <None Include="ubasic\basic_cfg.h">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\basic_interface.c">
+    </None>
+    <None Include="ubasic\basic_interface.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\platform.h">
+    </None>
+    <None Include="ubasic\platform.h">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\tokenizer.c">
+    </None>
+    <None Include="ubasic\tokenizer.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\tokenizer.h">
+    </None>
+    <None Include="ubasic\tokenizer.h">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\ubasic.c">
+    </None>
+    <None Include="ubasic\ubasic.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ubasic\ubasic.h">
+    </None>
+    <None Include="ubasic\ubasic.h">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <Compile Include="usb\Common.h">
       <SubType>compile</SubType>
     </Compile>
@@ -333,7 +360,7 @@
     <Compile Include="usb_support.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="wa2.h">
+    <Compile Include="gbm8.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

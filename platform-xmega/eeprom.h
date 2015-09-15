@@ -37,7 +37,6 @@ extern "C" {
 #endif
 
 
-#define EEPROM_BASE     0
    
 typedef struct t_eeprom_storage {
 	uint8_t salt;
@@ -47,20 +46,17 @@ typedef struct t_eeprom_storage {
 	uint8_t configA;
 	uint8_t configB;
 	uint8_t ln_threshold;
-	uint16_t servo_startup_delay;
-	uint16_t servo_timeout;
-	uint8_t servo_start_method;
-	uint16_t servo_min[2];
-    uint16_t servo_max[2];
-    uint8_t servo_time_ratio[2];
+	uint8_t gbm_mode;
+	uint8_t gbm_threshold_on;
+	uint8_t gbm_threshold_off;
+	uint8_t gbm_delay_on;
+	uint8_t gbm_delay_off;
 	uint8_t ln_gpio_opcode[16][3];
 } t_eeprom_storage;
 
 typedef struct t_eeprom_status {
 	uint8_t flags;
 	uint8_t ln_gpio_status;
-	uint8_t relay_request;
-	uint8_t servo_position[2];
 } t_eeprom_status;
 
 void eeprom_init(void);

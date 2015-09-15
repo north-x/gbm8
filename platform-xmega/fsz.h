@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Manuel Vetterli
+ * Copyright (c) 2015, Manuel Vetterli
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,19 +29,22 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#ifndef LN_SUPPORT_H_
-#define LN_SUPPORT_H_
+#ifndef FSZ_H_
+#define FSZ_H_
 
-#include "loconet.h"
+typedef struct fsz_reg {
+	uint16_t value;
+	uint16_t shadow;
+	uint16_t set;
+	uint16_t clear;
+} fsz_reg_t;
 
-void loconet_init(void);
-uint8_t ln_create_message(uint8_t *msg);
-uint8_t ln_create_message_ack(uint8_t *msg);
-void ln_gpio_process_tx(void);
-void ln_gpio_process_rx(lnMsg *LnPacket);
-void ln_load_board_config(void);
-void ln_create_opcode(uint8_t *buf, uint8_t opc, uint16_t addr);
+extern fsz_reg_t fsz_register[2];
+extern uint8_t fsz_sr_reg[4];
+extern uint8_t fsz_sv_temp;
 
-extern uint8_t ln_gpio_status;
+void fsz_sv_helper_set(void);
+void fsz_sv_helper_clear(void);
 
-#endif /* LN_SUPPORT_H_ */
+
+#endif /* FSZ_H_ */

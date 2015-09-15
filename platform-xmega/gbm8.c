@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Manuel Vetterli
+ * Copyright (c) 2015, Manuel Vetterli
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,29 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#ifndef WA2_H_
-#define WA2_H_
+#include <avr/io.h>
+#include "sys/process.h"
+#include "sys/etimer.h"
+#include "eeprom.h"
+#include "gbm8.h"
 
-#define MAP_BITS(SRC_REG, DEST_REG, SRC_BIT, DEST_BIT) if (SRC_REG&(1<<(SRC_BIT))) DEST_REG |= (1<<(DEST_BIT)); else DEST_REG &= ~(1<<(DEST_BIT))
+PROCESS(gbm_io_process, "GBM I/O");
+uint8_t gbm_register_filt;
 
-/************************************************************************/
-/* Config Flags                                                         */
-/************************************************************************/
-#define WA2_CONF_SERVO_PWR_ALWAYS_ON	0
-#define WA2_CONF_SERVO_ENABLE_PWM_A		1
-#define WA2_CONF_SERVO_ENABLE_PWM_B		2
-#define WA2_CONF_RELAY_MONOSTABLE		3
-#define WA2_CONF_PWM_OUTPUTS_ENABLE		4
-#define WA2_CONF_PWM_CHANNEL7_ENABLE	5
-#define WA2_CONF_INPUTS_PULLUP_ENABLE	6
-
-/************************************************************************/
-/* Function Prototypes                                                  */
-/************************************************************************/
-void wa2_update_configuration(void);
-
-#endif /* WA2_H_ */
+PROCESS_THREAD(gbm_io_process, ev, data)
+{
+	
+	PROCESS_BEGIN();
+	
+	// Initialization
+	PORTC.OUT = 0;
+	PORTC.DIR = 0xFF;
+	
+	while (1)
+	{
+		PROCESS_PAUSE();
+		//PORTC.OUT = gbm_register_filt;
+	}
+	
+	PROCESS_END();
+}

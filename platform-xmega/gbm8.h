@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Manuel Vetterli
+ * Copyright (c) 2015, Manuel Vetterli
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,19 +29,29 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#ifndef LN_SUPPORT_H_
-#define LN_SUPPORT_H_
+#ifndef GBM8_H_
+#define GBM8_H_
 
-#include "loconet.h"
+#define MAP_BITS(SRC_REG, DEST_REG, SRC_BIT, DEST_BIT) if (SRC_REG&(1<<(SRC_BIT))) DEST_REG |= (1<<(DEST_BIT)); else DEST_REG &= ~(1<<(DEST_BIT))
 
-void loconet_init(void);
-uint8_t ln_create_message(uint8_t *msg);
-uint8_t ln_create_message_ack(uint8_t *msg);
-void ln_gpio_process_tx(void);
-void ln_gpio_process_rx(lnMsg *LnPacket);
-void ln_load_board_config(void);
-void ln_create_opcode(uint8_t *buf, uint8_t opc, uint16_t addr);
+/************************************************************************/
+/* Config Flags                                                         */
+/************************************************************************/
+#define GBM_MODE_INIT 0
+#define GBM_MODE_NORMAL	1
+#define GBM_MODE_SBK 2
+#define GBM_MODE_FSZ 3
 
-extern uint8_t ln_gpio_status;
 
-#endif /* LN_SUPPORT_H_ */
+
+/************************************************************************/
+/* Function Prototypes                                                  */
+/************************************************************************/
+void update_gbm_mode(void);
+void gbm8_hw_detect(void);
+
+extern uint8_t gbm_mode;
+extern uint8_t gbm_register_filt;
+extern uint8_t gbm_register_filt_filt;
+
+#endif /* GBM8_H_ */

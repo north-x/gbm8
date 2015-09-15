@@ -37,12 +37,14 @@
 #ifndef PARAMETER_TABLE_H_
 #define PARAMETER_TABLE_H_
 
-#include "wa2.h"
+#include "gbm8.h"
 #include "eeprom.h"
 #include "platform.h"
 #include "ubasic.h"
 #include "servo.h"
 #include "port.h"
+#include "fsz.h"
+#include "gbm.h"
 #include "usb/usb.h"
 #include <avr/wdt.h>
 #include <string.h>
@@ -87,6 +89,30 @@ SV(9, "User Register 2", tse_user_reg2, 0)*/
 SV(10, "LN GPIO Status", ln_gpio_status, 0)
 SV(11, "LN GPIO Status Transmit", ln_gpio_status_tx, 0)
 SV(12, "LN Threshold Voltage x10", eeprom.ln_threshold, ln_update_threshold)
+SV(18, "FSZ Set Num", fsz_sv_temp, fsz_sv_helper_set)
+SV(19, "FSZ Clear Num", fsz_sv_temp, fsz_sv_helper_clear)
+SV_LSB(20, "FSZ1 Set LSB", fsz_register[0].set, 0)
+SV_MSB(21, "FSZ1 Set MSB", fsz_register[0].set, 0)
+SV_LSB(22, "FSZ1 Clear LSB", fsz_register[0].clear, 0)
+SV_MSB(23, "FSZ1 Clear MSB", fsz_register[0].clear, 0)
+SV_LSB(24, "FSZ1 Reg LSB", fsz_register[0].value, 0)
+SV_MSB(25, "FSZ1 Reg MSB", fsz_register[0].value, 0)
+SV_LSB(26, "FSZ2 Set LSB", fsz_register[1].set, 0)
+SV_MSB(27, "FSZ2 Set MSB", fsz_register[1].set, 0)
+SV_LSB(28, "FSZ2 Clear LSB", fsz_register[1].clear, 0)
+SV_MSB(29, "FSZ2 Clear MSB", fsz_register[1].clear, 0)
+SV_LSB(30, "FSZ2 Reg LSB", fsz_register[1].value, 0)
+SV_MSB(31, "FSZ2 Reg MSB", fsz_register[1].value, 0)
+SV(32, "GBM Threshold ON", eeprom.gbm_threshold_on, 0)
+SV(33, "GBM Threshold OFF", eeprom.gbm_threshold_off, 0)
+SV(34, "GBM Value 1", gbm_avg[0], 0)
+SV(35, "GBM Value 2", gbm_avg[1], 0)
+SV(36, "GBM Value 3", gbm_avg[2], 0)
+SV(37, "GBM Value 4", gbm_avg[3], 0)
+SV(38, "GBM Value 5", gbm_avg[4], 0)
+SV(39, "GBM Value 6", gbm_avg[5], 0)
+SV(40, "GBM Value 7", gbm_avg[6], 0)
+SV(17, "GBM Value 8", gbm_avg[7], 0)
 SV(41, "LN GPIO 1 On Opcode 1", eeprom.ln_gpio_opcode[0][0], 0)
 SV(42, "LN GPIO 1 On Opcode 2", eeprom.ln_gpio_opcode[0][1], 0)
 SV(43, "LN GPIO 1 On Opcode 3", eeprom.ln_gpio_opcode[0][2], 0)

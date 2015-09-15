@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Manuel Vetterli
+ * Copyright (c) 2015, Manuel Vetterli
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,19 +29,23 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#ifndef LN_SUPPORT_H_
-#define LN_SUPPORT_H_
 
-#include "loconet.h"
+#ifndef GBM_H_
+#define GBM_H_
 
-void loconet_init(void);
-uint8_t ln_create_message(uint8_t *msg);
-uint8_t ln_create_message_ack(uint8_t *msg);
-void ln_gpio_process_tx(void);
-void ln_gpio_process_rx(lnMsg *LnPacket);
-void ln_load_board_config(void);
-void ln_create_opcode(uint8_t *buf, uint8_t opc, uint16_t addr);
 
-extern uint8_t ln_gpio_status;
+void gbm_init(void);
 
-#endif /* LN_SUPPORT_H_ */
+extern volatile uint8_t gbm_adc_phase;
+extern int8_t gbm_value_act[8];
+extern uint8_t gbm_avg[8];
+extern uint16_t gbm_avg_int[8];
+
+#define GBM_TIMECONST 128
+#define GBM_THRESHOLD_ON eeprom.gbm_threshold_on
+#define GBM_THRESHOLD_OFF eeprom.gbm_threshold_off
+#define GBM_DELAY_ON	eeprom.gbm_delay_on
+#define GBM_DELAY_OFF	eeprom.gbm_delay_off
+
+
+#endif /* GBM_H_ */

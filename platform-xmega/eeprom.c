@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <avr/eeprom.h>
 
-#include "wa2.h"
+#include "gbm8.h"
 #include "eeprom.h"
 #include "port.h"
 #include "platform.h"
@@ -52,44 +52,36 @@ struct t_eeprom_storage eeprom_default = {
 			.sv_serial_number = 0xFFFF,
 			.sv_destination_id = 0xFFFF,
 			.ubasic_autostart = (1<<0)|(1<<1)|(0<<2)|(0<<3),
-			.configA = (0<<WA2_CONF_PWM_OUTPUTS_ENABLE)|(0<<WA2_CONF_PWM_CHANNEL7_ENABLE)|(1<<WA2_CONF_INPUTS_PULLUP_ENABLE)|(1<<WA2_CONF_SERVO_ENABLE_PWM_A),
+			.configA = 0,
 			.configB = 0,
 			.ln_threshold = 25,
-			.servo_startup_delay = 80,
-			.servo_timeout = 0,
-			.servo_start_method = 1,
-#if 0
-			.servo_min = {15000, 15000},
-			.servo_max = {45000, 45000},
-#else
-			.servo_min = {32767, 32767},
-			.servo_max = {32768, 32768},
-#endif
-			.servo_time_ratio = {16, 16},
-			.ln_gpio_opcode =
-			{{ 0xB0, 0x01, 0x20},
-			 { 0xB0, 0x01, 0x00},
-			 { 0xB0, 0x02, 0x20},
-			 { 0xB0, 0x02, 0x00},
-			 { 0xB0, 0x03, 0x20},
-			 { 0xB0, 0x03, 0x00},
-			 { 0, 0, 0},
-			 { 0, 0, 0},
-			 { 0xB0, 0x04, 0x20},
-			 { 0xB0, 0x04, 0x00},
-			 { 0xB0, 0x05, 0x20},
-			 { 0xB0, 0x05, 0x00},
-			 { 0xB0, 0x06, 0x20},
-			 { 0xB0, 0x06, 0x00},
-			 { 0, 0, 0},
-			 { 0, 0, 0}},
+			.gbm_mode = GBM_MODE_NORMAL,
+			.gbm_threshold_on = 15,
+			.gbm_threshold_off = 10,
+			.gbm_delay_on = 5,
+			.gbm_delay_off = 40,
+/*			.ln_gpio_opcode =
+			{{ 0xB2, 0x7D, 0x50}, //251 1 (Addr Status)
+			 { 0xB2, 0x7D, 0x40},
+			 { 0xB2, 0x7D, 0x70}, //252 1
+			 { 0xB2, 0x7D, 0x60},
+			 { 0xB2, 0x7E, 0x50}, //253 1
+			 { 0xB2, 0x7E, 0x40},
+			 { 0xB2, 0x7E, 0x70}, //254 1
+			 { 0xB2, 0x7E, 0x60},
+			 { 0xB2, 0x79, 0x50}, //243 1
+			 { 0xB2, 0x79, 0x40},
+			 { 0xB2, 0x78, 0x70}, //242 1
+			 { 0xB2, 0x78, 0x60},
+			 { 0xB2, 0x78, 0x50}, //241 1
+			 { 0xB2, 0x78, 0x40},
+			 { 0xB2, 0x77, 0x70}, //240 1
+			 { 0xB2, 0x77, 0x60}},*/
         };
 
 struct t_eeprom_status eeprom_status_default = {
 	.flags = 0,
 	.ln_gpio_status = 0,
-	.relay_request = 0,
-	.servo_position = { 127, 127 }
 	};
 
 void eeprom_load_status(void)
