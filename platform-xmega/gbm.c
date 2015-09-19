@@ -139,12 +139,18 @@ void gbm_init(void)
 	PORTA.PIN1CTRL = PORT_ISC_INPUT_DISABLE_gc;
 	PORTA.PIN2CTRL = PORT_ISC_INPUT_DISABLE_gc;
 	PORTA.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
-	
+
+#if defined GBM8_20121212	
 	PORTB.PIN0CTRL = PORT_ISC_INPUT_DISABLE_gc;
 	PORTB.PIN1CTRL = PORT_ISC_INPUT_DISABLE_gc;
 	PORTB.PIN2CTRL = PORT_ISC_INPUT_DISABLE_gc;
 	PORTB.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
-	
+#elif defined GBM8_20120104
+	PORTA.PIN4CTRL = PORT_ISC_INPUT_DISABLE_gc;
+	PORTA.PIN5CTRL = PORT_ISC_INPUT_DISABLE_gc;
+	PORTA.PIN6CTRL = PORT_ISC_INPUT_DISABLE_gc;
+	PORTA.PIN7CTRL = PORT_ISC_INPUT_DISABLE_gc;
+#endif
 	// Counter counts from 0 to PER
 	// - if DCC input (event ch2) changes, timer value is loaded to CCA and timer is reset
 	// - if counter reaches CCB ADC is triggered (via event ch3)
@@ -231,10 +237,17 @@ ISR(ADCA_CH3_vect)
 	else
 	{
 		// Configure MUX to scan tracks 1-4
+#if defined GBM8_20121212
 		ADCA.CH0.MUXCTRL = (7+4)<<3;
 		ADCA.CH1.MUXCTRL = (6+4)<<3;
 		ADCA.CH2.MUXCTRL = (5+4)<<3;
 		ADCA.CH3.MUXCTRL = (4+4)<<3;
+#elif defined GBM8_20120104
+		ADCA.CH0.MUXCTRL = 7<<3;
+		ADCA.CH1.MUXCTRL = 6<<3;
+		ADCA.CH2.MUXCTRL = 5<<3;
+		ADCA.CH3.MUXCTRL = 4<<3;
+#endif
 		
 		// Store results
 		gbm_value_act[4] = (ADCA.CH0RES>>8);
