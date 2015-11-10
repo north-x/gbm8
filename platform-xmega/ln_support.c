@@ -353,6 +353,14 @@ void ln_gpio_process_rx(lnMsg *LnPacket)
 
 void ln_create_opcode(uint8_t *buf, uint8_t opc, uint16_t addr)
 {
+	if (addr==0)
+	{
+		buf[0] = 0;
+		buf[3] = 0;
+		
+		return;
+	}
+	
 	switch (opc)
 	{
 		case OPC_SW_REQ:
@@ -373,6 +381,10 @@ void ln_create_opcode(uint8_t *buf, uint8_t opc, uint16_t addr)
 			buf[2] = ((addr>>8)&0x7F)|OPC_INPUT_REP_CB|((addr&1)?0x20:0);
 			buf[5] = buf[2]|OPC_INPUT_REP_HI;
 			break;
+		default:
+			buf[0] = 0;
+			buf[3] = 0;
+			break;
 	}
 }
 
@@ -383,16 +395,16 @@ void ln_load_board_config(void)
 	switch (deviceID)
 	{
 		case 0x2CFC:
-			eeprom.sv_destination_id = deviceID;
-			eeprom.sv_serial_number = deviceID;
-			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 251);
-			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 252);
-			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 253);
-			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 254);
-			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 243);
-			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 242);
-			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 241);
-			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 240);
+			eeprom.sv_destination_id = 7124;
+			eeprom.sv_serial_number = 7124;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 226);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 227);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 256);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 257);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 258);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 259);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 260);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 261);
 			break;
 		case 0x3924:
 			eeprom.sv_destination_id = 492;
@@ -417,6 +429,79 @@ void ln_load_board_config(void)
 			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 249);
 			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 250);
 			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 248);
+			break;
+		case 0xB618:
+			eeprom.sv_destination_id = 834;
+			eeprom.sv_serial_number = 834;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 210);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 214);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 222);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 223);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 224);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 225);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 273);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 274);
+			break;
+		case 0xB6F0:
+			eeprom.sv_destination_id = 836;
+			eeprom.sv_serial_number = 836;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 209);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 211);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 212);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 213);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 269);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 270);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 271);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 272);
+			break;
+		case 0xCF24:
+			eeprom.sv_destination_id = 838;
+			eeprom.sv_serial_number = 838;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 204);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 205);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 206);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 207);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 231);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 232);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 267);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 268);
+			break;
+		case 0x0C80:
+			eeprom.sv_destination_id = 840;
+			eeprom.sv_serial_number = 840;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 201);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 202);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 203);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 228);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 229);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 230);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 237);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 266);
+			break;
+		case 0x2F67:
+			eeprom.sv_destination_id = 842;
+			eeprom.sv_serial_number = 842;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 233);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 234);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 235);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 236);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 262);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 263);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 264);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 265);
+			break;
+		case 0x7109:
+			eeprom.sv_destination_id = 7109;
+			eeprom.sv_serial_number = 7109;
+			eeprom.gbm_mode = 2;
+			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 0);
+			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 216);
+			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 217);
+			ln_create_opcode(eeprom.ln_gpio_opcode[6], OPC_INPUT_REP, 218);
+			ln_create_opcode(eeprom.ln_gpio_opcode[8], OPC_INPUT_REP, 219);
+			ln_create_opcode(eeprom.ln_gpio_opcode[10], OPC_INPUT_REP, 220);
+			ln_create_opcode(eeprom.ln_gpio_opcode[12], OPC_INPUT_REP, 221);
+			ln_create_opcode(eeprom.ln_gpio_opcode[14], OPC_INPUT_REP, 215);
 			break;
 		case 0x7B5A:
 			eeprom.sv_destination_id = 498;
