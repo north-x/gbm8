@@ -125,7 +125,16 @@ lnMsg *recvLnMsg( LnBuf *Buffer )
 		else 	if( Buffer->ReadExpLen == 0 )
 		{
 			Buffer->ReadExpLen = newByte ;
-			bGotNewLength = 1 ;
+			// Sanity check of packet length
+			if (Buffer->ReadExpLen>16)
+			{
+				Buffer->ReadExpLen = 0;
+				Buffer->Stats.RxErrors++;
+				Buffer->ReadPacketIndex = Buffer->ReadIndex;
+				bGotNewLength = 0;
+			}
+			else
+				bGotNewLength = 1 ;
 		}
 		else 
 		{
