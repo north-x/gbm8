@@ -72,9 +72,11 @@ void init(void)
 	
 	process_start(&etimer_process, NULL);
 	
+#if defined GBM8_20121212	
 	gbm8_hw_detect();
 	
 	usb_init();
+#endif
 	loconet_init();
 	
 	// Reconfigure comparator to match hardware

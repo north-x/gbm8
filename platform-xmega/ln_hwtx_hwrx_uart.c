@@ -79,6 +79,8 @@ volatile uint8_t rxIsrData;
 #define STARTBIT_MONITOR_BIT PB4
 #endif
 */
+
+#if defined GBM8_20121212
 #define LN_HW_UART_ID			USARTE0
 #define LN_HW_UART_RX_SIGNAL    USARTE0_RXC_vect
 #define LN_RX_PORT				PORTE
@@ -88,6 +90,20 @@ volatile uint8_t rxIsrData;
 #define LN_TX_DDR				PORTE.DIR
 #define LN_TX_BIT				3
 #define LN_TX_PINCTRL			PORTE.PIN3CTRL
+
+#elif defined GBM8_20120104
+#define LN_HW_UART_ID			USARTD1
+#define LN_HW_UART_RX_SIGNAL    USARTD1_RXC_vect
+#define LN_RX_PORT				PORTD
+#define LN_RX_BIT				6
+
+#define LN_TX_PORT				PORTD
+#define LN_TX_DDR				PORTD.DIR
+#define LN_TX_BIT				7
+#define LN_TX_PINCTRL			PORTD.PIN7CTRL
+#else
+	#error "No valid hardware version defined"
+#endif
 
 #define LN_SW_UART_SET_TX_LOW  LN_TX_PORT.OUTCLR = (1<<LN_TX_BIT);  // to pull down LN line to drive low level
 #define LN_SW_UART_SET_TX_HIGH LN_TX_PORT.OUTSET = (1<<LN_TX_BIT);  // master pull up will take care of high LN level
@@ -103,6 +119,7 @@ volatile uint8_t rxIsrData;
 
 void initLocoNetHardware(LnBuf *pstRxBuffer)
 {	
+#if defined GBM8_20121212
 	// PORTE 2:RX 3:TX
 	PORTE.PIN2CTRL = PORT_OPC_TOTEM_gc;
 	PORTE.PIN3CTRL = PORT_OPC_TOTEM_gc | PORT_INVEN_bm;
@@ -150,6 +167,19 @@ void initLocoNetHardware(LnBuf *pstRxBuffer)
 	EVSYS.DATA = (1<<1);
 	EVSYS.STROBE = (1<<1);
 		
+#elif defined GBM8_20120104
+	LN_TX_PINCTRL = PORT_OPC_TOTEM_gc | PORT_INVEN_bm;
+	PORTD.OUTSET = 1<<LN_TX_BIT;
+	PORTD.DIRSET = 1<<LN_TX_BIT;
+
+	// Enable Pull-down on RX line (voltage divider), input sense both edges
+	PORTD.PIN6CTRL = PORT_ISC_BOTHEDGES_gc | PORT_OPC_PULLDOWN_gc;
+	
+	// Input sense toghether with Port interrupt 0 are used to detect if the bus is free.
+	LN_RX_PORT.INT0MASK = (1<<LN_RX_BIT);
+	// Clear any pending flags
+	LN_RX_PORT.INTFLAGS = PORT_INT0IF_bm | PORT_INT1IF_bm;
+#endif
 	// Set the TX line to IDLE
 	LN_SW_UART_SET_TX_HIGH
 
@@ -192,16 +222,27 @@ void initLocoNetHardware(LnBuf *pstRxBuffer)
 // 
 static void ResetPinChange(void)
 {
+#if defined GBM8_20121212
 	// Reset the interrupt flag
 	ACA.STATUS = AC_AC0IF_bm|AC_AC1IF_bm;
+#elif defined GBM8_20120104
+	LN_RX_PORT.INTFLAGS = PORT_INT0IF_bm | PORT_INT1IF_bm;
+#endif
 }
 
 static Bool_t IsPinChanged(void)
 {
+#if defined GBM8_20121212
 	if (ACA.STATUS&(AC_AC0IF_bm|AC_AC1IF_bm))
 		return TRUE_E;
 	else
 		return FALSE_E;
+#elif defined GBM8_20120104
+	if (LN_RX_PORT.INTFLAGS!=0)
+		return TRUE_E;
+	else
+		return FALSE_E;
+#endif
 }
 
 ////////////////////////////// CD backoff timer //////////////////////////////

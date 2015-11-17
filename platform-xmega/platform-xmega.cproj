@@ -75,9 +75,10 @@
         <avrgcc.compiler.symbols.DefSymbols>
           <ListValues>
             <Value>F_CPU=32000000L</Value>
-            <Value>SOFTWARE_VERSION=4</Value>
+            <Value>SOFTWARE_VERSION=5</Value>
             <Value>USB_MAXEP=2</Value>
             <Value>AVR</Value>
+            <Value>GBM8_20120104</Value>
             <Value>NDEBUG</Value>
           </ListValues>
         </avrgcc.compiler.symbols.DefSymbols>
@@ -113,9 +114,10 @@
         <avrgcc.compiler.symbols.DefSymbols>
           <ListValues>
             <Value>F_CPU=32000000L</Value>
-            <Value>SOFTWARE_VERSION=4</Value>
+            <Value>SOFTWARE_VERSION=5</Value>
             <Value>USB_MAXEP=2</Value>
             <Value>AVR</Value>
+            <Value>GBM8_20120104</Value>
           </ListValues>
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
