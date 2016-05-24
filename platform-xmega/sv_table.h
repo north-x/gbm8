@@ -45,6 +45,7 @@
 #include "port.h"
 #include "fsz.h"
 #include "gbm.h"
+#include "sbk.h"
 #include "usb/usb.h"
 #include <avr/wdt.h>
 #include <string.h>
@@ -84,6 +85,8 @@ SV_MSB(4, "Serial Number H", eeprom.sv_serial_number, 0)
 SV(5, "Command Register", cmd_register, cmd_exec)
 SV(6, "Config Register 1", eeprom.configA, 0)
 SV(7, "Config Register 2", eeprom.configB, 0)
+SV(8, "SBK In Track", sbk_in_track, sbk_update_track)
+SV(9, "SBK Out Track", sbk_out_track, sbk_update_track)
 /*SV(8, "User Register 1", tse_user_reg1, 0)
 SV(9, "User Register 2", tse_user_reg2, 0)*/
 SV(10, "LN GPIO Status", ln_gpio_status, 0)
