@@ -47,10 +47,10 @@ typedef struct t_eeprom_storage {
 	uint8_t configB;
 	uint8_t ln_threshold;
 	uint8_t gbm_mode;
-	uint8_t gbm_threshold_on;
-	uint8_t gbm_threshold_off;
-	uint8_t gbm_delay_on;
-	uint8_t gbm_delay_off;
+	uint8_t gbm_threshold_on[8];
+	uint8_t gbm_threshold_off[8];
+	uint8_t gbm_delay_on[8];
+	uint8_t gbm_delay_off[8];
 	uint8_t ln_gpio_opcode[16][3];
 } t_eeprom_storage;
 

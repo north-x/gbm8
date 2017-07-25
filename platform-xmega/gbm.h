@@ -35,17 +35,22 @@
 
 
 void gbm_init(void);
+void gbm_helper_multi_threshold_on(void);
+void gbm_helper_multi_threshold_off(void);
+void gbm_helper_multi_delay_on(void);
+void gbm_helper_multi_delay_off(void);
 
 extern volatile uint8_t gbm_adc_phase;
 extern int8_t gbm_value_act[8];
 extern uint8_t gbm_avg[8];
 extern uint16_t gbm_avg_int[8];
+extern uint8_t gbm_register_filt_filt;
+
+extern uint8_t gbm_track_select_L;
+extern uint8_t gbm_track_select_H;
+extern uint8_t gbm_temp_multi;
 
 #define GBM_TIMECONST 128
-#define GBM_THRESHOLD_ON eeprom.gbm_threshold_on
-#define GBM_THRESHOLD_OFF eeprom.gbm_threshold_off
-#define GBM_DELAY_ON	eeprom.gbm_delay_on
-#define GBM_DELAY_OFF	eeprom.gbm_delay_off
 
 
 #endif /* GBM_H_ */

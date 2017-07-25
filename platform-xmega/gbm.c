@@ -50,6 +50,10 @@ uint16_t gbm_avg_int[8];
 uint8_t gbm_filter_cnt[8];
 uint8_t gbm_register_filt_filt;
 
+uint8_t gbm_track_select_L;
+uint8_t gbm_track_select_H;
+uint8_t gbm_temp_multi;
+
 
 PROCESS(gbm_process, "GBM");
 
@@ -71,11 +75,11 @@ PROCESS_THREAD(gbm_process, ev, data)
 			gbm_avg_int[track] += abs(gbm_value_act[track]+1);
 			gbm_avg_int[track] -= gbm_avg[track];
 			
-			if (gbm_avg[track] > GBM_THRESHOLD_ON)
+			if (gbm_avg[track] > eeprom.gbm_threshold_on[track])
 			{
 				gbm_register_filt |= (1<<track);
 			}
-			else if (gbm_avg[track] < GBM_THRESHOLD_OFF)
+			else if (gbm_avg[track] < eeprom.gbm_threshold_off[track])
 			{
 				gbm_register_filt &= ~(1<<track);
 			}
@@ -95,15 +99,15 @@ PROCESS_THREAD(gbm_process, ev, data)
 					if ((gbm_register_filt_filt&(1<<track))==0)
 					{
 						gbm_filter_cnt[track]++;
-						if (gbm_filter_cnt[track]>GBM_DELAY_ON)
+						if (gbm_filter_cnt[track]>eeprom.gbm_delay_on[track])
 						{
 							gbm_register_filt_filt |= (1<<track);
-							gbm_filter_cnt[track] = GBM_DELAY_OFF;
+							gbm_filter_cnt[track] = eeprom.gbm_delay_off[track];
 						}
 					}
 					else
 					{
-						gbm_filter_cnt[track] = GBM_DELAY_OFF;
+						gbm_filter_cnt[track] = eeprom.gbm_delay_off[track];
 					}
 				
 				}
@@ -260,4 +264,56 @@ ISR(ADCA_CH3_vect)
 #if 0
 	PORTC.OUTCLR = (1<<7);
 #endif
+}
+
+void gbm_helper_multi_threshold_on(void)
+{
+	uint8_t index;
+	
+	for (index=0;index<8;index++)
+	{
+		if (gbm_track_select_L&(1<<index))
+		{
+			eeprom.gbm_threshold_on[index] = gbm_temp_multi;
+		}
+	}
+}
+
+void gbm_helper_multi_threshold_off(void)
+{
+	uint8_t index;
+	
+	for (index=0;index<8;index++)
+	{
+		if (gbm_track_select_L&(1<<index))
+		{
+			eeprom.gbm_threshold_off[index] = gbm_temp_multi;
+		}
+	}
+}
+
+void gbm_helper_multi_delay_on(void)
+{
+	uint8_t index;
+	
+	for (index=0;index<8;index++)
+	{
+		if (gbm_track_select_L&(1<<index))
+		{
+			eeprom.gbm_delay_on[index] = gbm_temp_multi;
+		}
+	}
+}
+
+void gbm_helper_multi_delay_off(void)
+{
+	uint8_t index;
+	
+	for (index=0;index<8;index++)
+	{
+		if (gbm_track_select_L&(1<<index))
+		{
+			eeprom.gbm_delay_off[index] = gbm_temp_multi;
+		}
+	}
 }

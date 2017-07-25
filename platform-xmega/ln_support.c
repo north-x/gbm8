@@ -30,6 +30,7 @@
  */ 
 
 #include <avr/io.h>
+#include <avr/wdt.h>
 #include "sys/process.h"
 #include "sys/etimer.h"
 #include "eeprom.h"
@@ -43,8 +44,10 @@
 
 PROCESS(ln_process, "Loconet Handler");
 PROCESS(ln_ack_process, "Loconet Ack Handler");
+PROCESS(ln_wdt_process, "Loconet Watchdog Handler");
 
 static struct etimer ln_ack_timer;
+static struct etimer ln_wdt_timer;
 
 static LnBuf LnBuffer;
 uint8_t ln_gpio_status;
@@ -54,6 +57,8 @@ uint8_t ln_gpio_status_tx;
 uint8_t ln_gpio_ack_tx;
 uint8_t ln_gpio_opcode_tx;
 uint8_t ln_gpio_opcode_tx2;
+uint8_t ln_wdt_flag;
+uint8_t ln_wdt_counter __attribute__ ((section (".noinit")));
 
 extern uint16_t deviceID;
 rwSlotDataMsg rSlot;
@@ -78,6 +83,49 @@ void loconet_init(void)
 	
 	process_start(&ln_process, NULL);
 	process_start(&ln_ack_process, NULL);
+	process_start(&ln_wdt_process, NULL);
+}
+
+PROCESS_THREAD(ln_wdt_process, ev, data)
+{
+	static lnMsg wdt_msg;
+	
+	PROCESS_BEGIN();
+	
+	if (RST.STATUS&RST_PORF_bm)
+	{
+		ln_wdt_counter = 0;
+		RST.STATUS = RST_PORF_bm;
+	}
+	
+	if (RST.STATUS&RST_WDRF_bm)
+	{
+		if (ln_wdt_counter<0xFF)
+		{
+			ln_wdt_counter++;
+		}
+		RST.STATUS = RST_WDRF_bm;
+	}
+	
+	wdt_enable(WDT_PER_8KCLK_gc);
+	wdt_msg.data[0] = 0x80;
+	etimer_set(&ln_wdt_timer, deviceID/256 + 3.5*CLOCK_SECOND);
+	
+	while (1)
+	{
+		PROCESS_YIELD();
+
+		etimer_reset(&ln_wdt_timer);
+
+		if (!ln_wdt_flag)
+		{
+			sendLocoNetPacket(&wdt_msg);
+		}
+		
+		ln_wdt_flag = 0;
+	}
+	
+	PROCESS_END();
 }
 
 PROCESS_THREAD(ln_ack_process, ev, data)
@@ -131,6 +179,9 @@ PROCESS_THREAD(ln_process, ev, data)
 	
 		if (LnPacket)
 		{   
+			wdt_reset();
+			ln_wdt_flag = 1;
+			
 			sendLocoNetPacketUSB(LnPacket);
 			
 			ln_gpio_process_rx(LnPacket);
@@ -494,6 +545,7 @@ void ln_load_board_config(void)
 			eeprom.sv_destination_id = 7109;
 			eeprom.sv_serial_number = 7109;
 			eeprom.gbm_mode = 2;
+			eeprom.gbm_delay_off[7] = 5;
 			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 0);
 			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 216);
 			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 217);
@@ -507,6 +559,7 @@ void ln_load_board_config(void)
 			eeprom.sv_destination_id = 7119;
 			eeprom.sv_serial_number = 7119;
 			eeprom.gbm_mode = 2;
+			eeprom.gbm_delay_off[7] = 5;
 			ln_create_opcode(eeprom.ln_gpio_opcode[0], OPC_INPUT_REP, 0);
 			ln_create_opcode(eeprom.ln_gpio_opcode[2], OPC_INPUT_REP, 276);
 			ln_create_opcode(eeprom.ln_gpio_opcode[4], OPC_INPUT_REP, 277);

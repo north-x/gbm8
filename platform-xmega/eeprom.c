@@ -56,10 +56,10 @@ struct t_eeprom_storage eeprom_default = {
 			.configB = 0,
 			.ln_threshold = 50,
 			.gbm_mode = GBM_MODE_NORMAL,
-			.gbm_threshold_on = 15,
-			.gbm_threshold_off = 10,
-			.gbm_delay_on = 5,
-			.gbm_delay_off = 40,
+			.gbm_threshold_on = { 15, 15, 15, 15, 15, 15, 15, 15 },
+			.gbm_threshold_off = { 10, 10, 10, 10, 10, 10, 10, 10 },
+			.gbm_delay_on = { 5, 5, 5, 5, 5, 5, 5, 5 },
+			.gbm_delay_off = { 40, 40, 40, 40, 40, 40, 40, 40 },
 /*			.ln_gpio_opcode =
 			{{ 0xB2, 0x7D, 0x50}, //251 1 (Addr Status)
 			 { 0xB2, 0x7D, 0x40},

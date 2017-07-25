@@ -47,8 +47,6 @@ static struct etimer sbk_in_timer, sbk_out_timer;
 #define DBG(...)        printf(__VA_ARGS__)
 #endif
 
-const uint8_t track2gbm[8] = {0, 6, 5, 4, 3, 2, 1, 7};
-#define TRACK2GBM(x)	track2gbm[x]
 
 PROCESS(sbk_in_process, "SBK In");
 PROCESS(sbk_out_process, "SBK Out");
@@ -156,10 +154,17 @@ PROCESS_THREAD(sbk_out_process, ev, data)
 		shiftreg_out16(shiftreg,1);
 
 		// First: wait until track is occupied (allows setting route even when track is empty)
-		PROCESS_WAIT_UNTIL((gbm_register_filt&(1<<TRACK2GBM(sbk_out_track)))!=0);
+		while ((gbm_register_filt_filt&(1<<sbk_out_track))==0)
+		{
+			PROCESS_PAUSE();
+		}
 		
 		// Second: wait until track is free again.
-		PROCESS_WAIT_UNTIL((gbm_register_filt&(1<<TRACK2GBM(sbk_out_track)))==0);
+		while ((gbm_register_filt_filt&(1<<sbk_out_track))!=0)
+		{
+			PROCESS_PAUSE();
+		}
+		
 /*
 		while (1)
 		{			
@@ -234,12 +239,24 @@ PROCESS_THREAD(sbk_in_process, ev, data)
 		
 		shiftreg_out16(shiftreg,1);
 		
+#if 0
 		// First: wait until track is free (allows proper functioning of the cleaning mode)
-		PROCESS_WAIT_UNTIL((gbm_register_filt&(1<<TRACK2GBM(sbk_in_track)))==0);
+		PROCESS_WAIT_UNTIL((gbm_register_filt_filt&(1<<sbk_in_track))==0);
 		
 		// Second: wait until track is occupied again
-		PROCESS_WAIT_UNTIL((gbm_register_filt&(1<<TRACK2GBM(sbk_in_track)))!=0);
+		PROCESS_WAIT_UNTIL((gbm_register_filt_filt&(1<<sbk_in_track))!=0);
+#else
+		while ((gbm_register_filt_filt&(1<<sbk_in_track))!=0)
+		{
+			PROCESS_PAUSE();
+		}
 		
+		while ((gbm_register_filt_filt&(1<<sbk_in_track))==0)
+		{
+			PROCESS_PAUSE();
+		}
+
+#endif		
 		if ((sbk_in_track!=sbk_out_track) && (sbk_mode==SBK_MODE_FSS))
 		{
 			// --> FSS aktivieren via LN --> 120612: nicht nötig, da ständig aktiv

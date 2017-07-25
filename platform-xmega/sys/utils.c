@@ -10,7 +10,7 @@
 #include <avr/pgmspace.h>
 #include "sys/utils.h"
 
-#if defined GBM8_20120104
+#if 1
 #include <util/crc16.h>
 uint16_t getID16(void)
 {
