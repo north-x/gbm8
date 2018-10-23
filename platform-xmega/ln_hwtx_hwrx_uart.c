@@ -80,22 +80,24 @@ volatile uint8_t rxIsrData;
 #endif
 */
 
-#if defined GBM8_20121212
+#if defined GBM8_20120104
 #define LN_HW_UART_ID			USARTE0
 #define LN_HW_UART_RX_SIGNAL    USARTE0_RXC_vect
 #define LN_RX_PORT				PORTE
 #define LN_RX_BIT				2
+#define LN_RX_PINCTRL			PORTE.PIN2CTRL
 
 #define LN_TX_PORT				PORTE
 #define LN_TX_DDR				PORTE.DIR
 #define LN_TX_BIT				3
 #define LN_TX_PINCTRL			PORTE.PIN3CTRL
 
-#elif defined GBM8_20120104
+#elif defined GBM8_20121212
 #define LN_HW_UART_ID			USARTD1
 #define LN_HW_UART_RX_SIGNAL    USARTD1_RXC_vect
 #define LN_RX_PORT				PORTD
 #define LN_RX_BIT				6
+#define LN_RX_PINCTRL			PORTD.PIN6CTRL
 
 #define LN_TX_PORT				PORTD
 #define LN_TX_DDR				PORTD.DIR
@@ -119,67 +121,16 @@ volatile uint8_t rxIsrData;
 
 void initLocoNetHardware(LnBuf *pstRxBuffer)
 {	
-#if defined GBM8_20121212
-	// PORTE 2:RX 3:TX
-	PORTE.PIN2CTRL = PORT_OPC_TOTEM_gc;
-	PORTE.PIN3CTRL = PORT_OPC_TOTEM_gc | PORT_INVEN_bm;
-	PORTE.OUTSET = (1<<2)|(1<<3);
-	PORTE.DIRSET = (1<<2)|(1<<3);
-	
-	// Set voltage reference
-	ACA.CTRLB = ((2500*10/78*64/3300)-1)&0x3F; // 2.5 V Threshold
-	
-	// connect comparators to pins
-	ACA.AC0MUXCTRL = AC_MUXPOS_PIN5_gc | AC_MUXNEG_SCALER_gc;
-	ACA.AC1MUXCTRL = AC_MUXPOS_PIN5_gc | AC_MUXNEG_SCALER_gc;
-	
-	// and enable them
-	//AC0 generates event on falling edge
-	ACA.AC0CTRL = AC_ENABLE_bm | AC_INTMODE_FALLING_gc | AC_INTLVL_OFF_gc | AC_HYSMODE_SMALL_gc;
-	//AC1 generates event on rising edge
-	ACA.AC1CTRL = AC_ENABLE_bm | AC_INTMODE_RISING_gc | AC_INTLVL_OFF_gc | AC_HYSMODE_SMALL_gc;
-
-	// clear pending interrupt flags (net free detection)
-	ACA.STATUS = AC_AC0IF_bm | AC_AC1IF_bm;
-	
-	EVSYS.CH0MUX = EVSYS_CHMUX_ACA_CH0_gc;
-	EVSYS.CH1MUX = EVSYS_CHMUX_ACA_CH1_gc;
-	
-	// Timer E0: Event0 clears the output Event 1 sets the output
-	TCE0.CTRLB = TC0_CCCEN_bm | TC_WGMODE_SINGLESLOPE_gc;
-	TCE0.CTRLD = TC_EVACT_RESTART_gc | TC_EVSEL_CH0_gc;
-	TCE0.PER = 0xFFFF;
-	TCE0.CCC = 0xFFFF;
-	TCE0.CTRLA = TC_CLKSEL_EVCH1_gc;
-	
-#ifdef DEBUG_ENABLE_LN_OUTPUT_ON_SERVO22_PWM
-	PORTC.DIRSET = 1<<3;
-	PORTC.PIN3CTRL = PORT_OPC_TOTEM_gc;
-	
-	TCC0.CTRLB = TC0_CCDEN_bm | TC_WGMODE_SINGLESLOPE_gc;
-	TCC0.CTRLD = TC_EVACT_RESTART_gc | TC_EVSEL_CH0_gc;
-	TCC0.PER = 0xFFFF;
-	TCC0.CCD = 0xFFFF;
-	TCC0.CTRLA = TC_CLKSEL_EVCH1_gc;
-#endif
-
-	// Use event to set initial conditions
-	EVSYS.DATA = (1<<1);
-	EVSYS.STROBE = (1<<1);
-		
-#elif defined GBM8_20120104
 	LN_TX_PINCTRL = PORT_OPC_TOTEM_gc | PORT_INVEN_bm;
-	PORTD.OUTSET = 1<<LN_TX_BIT;
-	PORTD.DIRSET = 1<<LN_TX_BIT;
-
-	// Enable Pull-down on RX line (voltage divider), input sense both edges
-	PORTD.PIN6CTRL = PORT_ISC_BOTHEDGES_gc | PORT_OPC_PULLDOWN_gc;
+	LN_RX_PINCTRL = PORT_OPC_TOTEM_gc | PORT_ISC_BOTHEDGES_gc;
+	LN_TX_PORT.OUTSET = 1<<LN_TX_BIT;
+	LN_TX_PORT.DIRSET = 1<<LN_TX_BIT;
 	
-	// Input sense toghether with Port interrupt 0 are used to detect if the bus is free.
+	// Input sense together with Port interrupt 0 are used to detect if the bus is free.
 	LN_RX_PORT.INT0MASK = (1<<LN_RX_BIT);
 	// Clear any pending flags
-	LN_RX_PORT.INTFLAGS = PORT_INT0IF_bm | PORT_INT1IF_bm;
-#endif
+	LN_RX_PORT.INTFLAGS = PORT_INT0IF_bm | PORT_INT1IF_bm;		
+
 	// Set the TX line to IDLE
 	LN_SW_UART_SET_TX_HIGH
 
@@ -222,27 +173,15 @@ void initLocoNetHardware(LnBuf *pstRxBuffer)
 // 
 static void ResetPinChange(void)
 {
-#if defined GBM8_20121212
-	// Reset the interrupt flag
-	ACA.STATUS = AC_AC0IF_bm|AC_AC1IF_bm;
-#elif defined GBM8_20120104
 	LN_RX_PORT.INTFLAGS = PORT_INT0IF_bm | PORT_INT1IF_bm;
-#endif
 }
 
 static Bool_t IsPinChanged(void)
 {
-#if defined GBM8_20121212
-	if (ACA.STATUS&(AC_AC0IF_bm|AC_AC1IF_bm))
-		return TRUE_E;
-	else
-		return FALSE_E;
-#elif defined GBM8_20120104
 	if (LN_RX_PORT.INTFLAGS!=0)
 		return TRUE_E;
 	else
 		return FALSE_E;
-#endif
 }
 
 ////////////////////////////// CD backoff timer //////////////////////////////

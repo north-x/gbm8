@@ -75,7 +75,7 @@ void init(void)
 #if defined GBM8_20121212	
 	gbm8_hw_detect();
 	
-	usb_init();
+	//usb_init();
 #endif
 	loconet_init();
 	
